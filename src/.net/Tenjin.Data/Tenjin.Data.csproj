@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PackageId>Tenjin.Data</PackageId>
+		<Authors>Gerard Gouws</Authors>
+		<Company>Tenjin Libraries</Company>
+		<Description>Small extensions library for .NET database functionality</Description>
+		<PackageIcon>tenjin.png</PackageIcon>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/Dr-GG/tenjin-data</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Dr-GG/tenjin-data</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryBranch>master</RepositoryBranch>
+		<PackageTags>C# extension methods;C# utility methods</PackageTags>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
+		<PackageReference Include="Tenjin" Version="1.1.28" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="tenjin.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>
