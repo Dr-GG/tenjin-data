@@ -1,7 +1,6 @@
-﻿namespace Tenjin.Data.Models
+﻿namespace Tenjin.Data.Models;
+
+public record MicrosoftSqlExceptionAttributes
 {
-    public record MicrosoftSqlExceptionAttributes
-    {
-        public int Number { get; init; } = 0;
-    }
+    public int Number { get; init; } = 0;
 }

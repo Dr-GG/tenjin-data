@@ -28,7 +28,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
-		<PackageReference Include="Tenjin" Version="1.6.3.71" />
+		<PackageReference Include="Tenjin" Version="1.10.5.88" />
 	</ItemGroup>
 
 	<ItemGroup>

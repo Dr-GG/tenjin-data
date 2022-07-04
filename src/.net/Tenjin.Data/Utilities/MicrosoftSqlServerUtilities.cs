@@ -3,46 +3,45 @@ using Microsoft.Data.SqlClient;
 using Tenjin.Data.Models;
 using Tenjin.Extensions;
 
-namespace Tenjin.Data.Utilities
+namespace Tenjin.Data.Utilities;
+
+public static class MicrosoftSqlServerUtilities
 {
-    public static class MicrosoftSqlServerUtilities
+    private const int SqlServerPrimaryKeyViolationErrorCode = 2627;
+    private const int SqlServerUniqueKeyViolationErrorCode = 2601;
+
+    public static bool IsDuplicateDataErrorCode(int errorCode)
     {
-        private const int SqlServerPrimaryKeyViolationErrorCode = 2627;
-        private const int SqlServerUniqueKeyViolationErrorCode = 2601;
+        return errorCode.EqualsAny(
+            SqlServerPrimaryKeyViolationErrorCode,
+            SqlServerUniqueKeyViolationErrorCode);
+    }
 
-        public static bool IsDuplicateDataErrorCode(int errorCode)
+    public static SqlException CreateSqlException(MicrosoftSqlExceptionAttributes attributes)
+    {
+        var error = ConstructFromInternalConstructor<SqlError>(
+            attributes.Number, (byte)0, (byte)0, string.Empty, string.Empty, string.Empty, 0, null);
+        var errorCollection = ConstructFromInternalConstructor<SqlErrorCollection>();
+        var addErrorMethod = typeof(SqlErrorCollection)
+            .GetMethod("Add", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        if (addErrorMethod == null)
         {
-            return errorCode.EqualsAny(
-                SqlServerPrimaryKeyViolationErrorCode,
-                SqlServerUniqueKeyViolationErrorCode);
+            throw new InvalidOperationException("Could not find all methods to create SqlException");
         }
 
-        public static SqlException CreateSqlException(MicrosoftSqlExceptionAttributes attributes)
-        {
-            var error = ConstructFromInternalConstructor<SqlError>(
-                attributes.Number, (byte)0, (byte)0, string.Empty, string.Empty, string.Empty, 0, null);
-            var errorCollection = ConstructFromInternalConstructor<SqlErrorCollection>();
-            var addErrorMethod = typeof(SqlErrorCollection)
-                .GetMethod("Add", BindingFlags.NonPublic | BindingFlags.Instance);
+        addErrorMethod.Invoke(errorCollection, new object?[] { error });
 
-            if (addErrorMethod == null)
-            {
-                throw new InvalidOperationException("Could not find all methods to create SqlException");
-            }
+        return ConstructFromInternalConstructor<SqlException>(
+            string.Empty, errorCollection, null, Guid.NewGuid());
+    }
 
-            addErrorMethod.Invoke(errorCollection, new object?[] { error });
+    private static T ConstructFromInternalConstructor<T>(params object?[] parameters)
+    {
+        var constructors = typeof(T).GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
 
-            return ConstructFromInternalConstructor<SqlException>(
-                string.Empty, errorCollection, null, Guid.NewGuid());
-        }
-
-        private static T ConstructFromInternalConstructor<T>(params object?[] parameters)
-        {
-            var constructors = typeof(T).GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
-
-            return (T)constructors
-                .First(ctor => ctor.GetParameters().Length == parameters.Length)
-                .Invoke(parameters);
-        }
+        return (T)constructors
+            .First(ctor => ctor.GetParameters().Length == parameters.Length)
+            .Invoke(parameters);
     }
 }
