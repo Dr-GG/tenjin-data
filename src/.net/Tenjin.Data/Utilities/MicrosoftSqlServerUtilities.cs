@@ -5,11 +5,17 @@ using Tenjin.Extensions;
 
 namespace Tenjin.Data.Utilities;
 
+/// <summary>
+/// A collection of methods used for Microsoft SQL Server functionality.
+/// </summary>
 public static class MicrosoftSqlServerUtilities
 {
     private const int SqlServerPrimaryKeyViolationErrorCode = 2627;
     private const int SqlServerUniqueKeyViolationErrorCode = 2601;
 
+    /// <summary>
+    /// Determines if an error code provided by Microsoft SQL server indicates a duplicate error code.
+    /// </summary>
     public static bool IsDuplicateDataErrorCode(int errorCode)
     {
         return errorCode.EqualsAny(
@@ -17,6 +23,9 @@ public static class MicrosoftSqlServerUtilities
             SqlServerUniqueKeyViolationErrorCode);
     }
 
+    /// <summary>
+    /// Creates a new SqlException based on a collection of parameters.
+    /// </summary>
     public static SqlException CreateSqlException(MicrosoftSqlExceptionAttributes attributes)
     {
         var error = ConstructFromInternalConstructor<SqlError>(
