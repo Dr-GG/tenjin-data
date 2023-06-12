@@ -1,4 +1,5 @@
 ﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
 using Tenjin.Data.Extensions;
 using Tenjin.Data.Models;
@@ -6,7 +7,7 @@ using Tenjin.Data.Utilities;
 
 namespace Tenjin.Data.Tests.ExtensionsTests;
 
-[TestFixture]
+[TestFixture, Parallelizable(ParallelScope.Children)]
 public class DataExceptionExtensionsTests
 {
     private static readonly Func<int, Exception> MicrosoftSqlServerExceptionFactory = sqlErrorCode =>
@@ -27,8 +28,8 @@ public class DataExceptionExtensionsTests
     {
         var exception = Activator.CreateInstance(type) as Exception;
 
-        Assert.IsNotNull(exception);
-        Assert.IsFalse(exception!.IsDuplicateDataException());
+        exception.Should().NotBeNull();
+        exception!.IsDuplicateDataException().Should().BeFalse();
     }
 
     [TestCase(1, 0)]
@@ -42,7 +43,7 @@ public class DataExceptionExtensionsTests
     {
         var exception = GenerateNestedDataException(nestedCount, sqlNumber, MicrosoftSqlServerExceptionFactory);
 
-        Assert.IsFalse(exception.IsDuplicateDataException());
+        exception.IsDuplicateDataException().Should().BeFalse();
     }
 
     [TestCase(1, 2627)]
@@ -61,7 +62,7 @@ public class DataExceptionExtensionsTests
     {
         var exception = GenerateNestedDataException(nestedCount, sqlNumber, MicrosoftSqlServerExceptionFactory);
 
-        Assert.IsTrue(exception.IsDuplicateDataException());
+        exception.IsDuplicateDataException().Should().BeTrue();
     }
 
     private static Exception GenerateNestedDataException(
