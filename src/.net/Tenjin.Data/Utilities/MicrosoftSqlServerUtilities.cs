@@ -32,17 +32,12 @@ public static class MicrosoftSqlServerUtilities
             attributes.Number, (byte)0, (byte)0, string.Empty, string.Empty, string.Empty, 0, null);
         var errorCollection = ConstructFromInternalConstructor<SqlErrorCollection>();
         var addErrorMethod = typeof(SqlErrorCollection)
-            .GetMethod("Add", BindingFlags.NonPublic | BindingFlags.Instance);
+            .GetMethod("Add", BindingFlags.NonPublic | BindingFlags.Instance)
+                          ?? throw new InvalidOperationException("Could not find all methods to create SqlException");
 
-        if (addErrorMethod == null)
-        {
-            throw new InvalidOperationException("Could not find all methods to create SqlException");
-        }
+        addErrorMethod.Invoke(errorCollection, [error]);
 
-        addErrorMethod.Invoke(errorCollection, new object?[] { error });
-
-        return ConstructFromInternalConstructor<SqlException>(
-            string.Empty, errorCollection, null, Guid.NewGuid());
+        return ConstructFromInternalConstructor<SqlException>(string.Empty, errorCollection, null, Guid.NewGuid());
     }
 
     private static T ConstructFromInternalConstructor<T>(params object?[] parameters)

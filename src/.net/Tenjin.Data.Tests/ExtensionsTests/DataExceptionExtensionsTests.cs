@@ -38,7 +38,7 @@ public class DataExceptionExtensionsTests
     [TestCase(4, 3)]
     [TestCase(5, 4)]
     public void IsDuplicateDataException_WhenProvidedWithASqlExceptionButIncorrectCode_ReturnsFalse(
-        int nestedCount, 
+        int nestedCount,
         int sqlNumber)
     {
         var exception = GenerateNestedDataException(nestedCount, sqlNumber, MicrosoftSqlServerExceptionFactory);
@@ -66,8 +66,8 @@ public class DataExceptionExtensionsTests
     }
 
     private static Exception GenerateNestedDataException(
-        int count, 
-        int sqlErrorCode, 
+        int count,
+        int sqlErrorCode,
         Func<int, Exception> dataExceptionFactory)
     {
         if (count == 1)
