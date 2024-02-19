@@ -18,7 +18,7 @@ public static class DataExceptionExtensions
             return MicrosoftSqlServerUtilities.IsDuplicateDataErrorCode(sqlError.Number);
         }
 
-        return error.InnerException != null && 
+        return error.InnerException != null &&
                error.InnerException.IsDuplicateDataException();
     }
 }

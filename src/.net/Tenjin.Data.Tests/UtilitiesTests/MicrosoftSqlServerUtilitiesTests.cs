@@ -1,11 +1,12 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using Tenjin.Data.Models;
 using Tenjin.Data.Utilities;
 
 namespace Tenjin.Data.Tests.UtilitiesTests;
 
-[TestFixture]
-public class MicrosoftSqlServerUtilitiesTests
+[TestFixture, Parallelizable(ParallelScope.Children)]
+public static class MicrosoftSqlServerUtilitiesTests
 {
     [TestCase(-1, false)]
     [TestCase(0, false)]
@@ -16,7 +17,7 @@ public class MicrosoftSqlServerUtilitiesTests
     [TestCase(2601, true)]
     public static void IsDuplicateDataErrorCode_WhenProvidedAnErrorCode_Matches(int errorCode, bool expectedResult)
     {
-        Assert.AreEqual(expectedResult, MicrosoftSqlServerUtilities.IsDuplicateDataErrorCode(errorCode));
+        expectedResult.Should().Be(MicrosoftSqlServerUtilities.IsDuplicateDataErrorCode(errorCode));
     }
 
     [TestCase(-1)]
@@ -43,7 +44,7 @@ public class MicrosoftSqlServerUtilitiesTests
         };
         var exception = MicrosoftSqlServerUtilities.CreateSqlException(attributes);
 
-        Assert.IsNotNull(exception);
-        Assert.AreEqual(number, exception.Number);
+        exception.Should().NotBeNull();
+        number.Should().Be(exception.Number);
     }
 }
